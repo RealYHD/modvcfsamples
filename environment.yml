@@ -1,0 +1,10 @@
+name: program
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - pip
+  - python-build
+  - pytest
+  - twine
+  - sphinx
