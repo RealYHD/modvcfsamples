@@ -10,8 +10,10 @@
         "src"
     ],
     "cSpell.words": [
+        "CHROM",
         "pytest",
         "pyvcf",
+        "vcfpy",
         "vcfs"
     ],
 }

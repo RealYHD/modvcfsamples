@@ -4,9 +4,9 @@ from modvcfsamples import sample
 
 def run(vcfs: list[str], only: list[str], output_dir: str):
     for vcf in vcfs:
-        vcf_records = sample.get_records_from_vcf(vcf)
-        sample.filter_all_sample_datatypes(vcf_records, *only)
-        sample.write_records_to_vcf(vcf_records, os.path.join(output_dir, os.path.basename(vcf)))
+        vcf_records, header = sample.get_records_from_vcf(vcf)
+        processed_vcfs, modified_header = sample.keep_specific_call_data(vcf_records, header, *only)
+        sample.write_records_to_vcf(processed_vcfs, modified_header, os.path.join(output_dir, os.path.basename(vcf)))
 
 def main():
     parser = argparse.ArgumentParser()
