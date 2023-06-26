@@ -8,3 +8,4 @@ dependencies:
   - pytest
   - twine
   - sphinx
+  - pyvcf

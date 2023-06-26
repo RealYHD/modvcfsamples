@@ -9,7 +9,6 @@ pipeline {
         }
         stage("unit tests") {
             steps {
-                // TODO Update the 
                 sh returnStatus: true, script: "python -m pytest --junitxml=unit_tests.xml --cov-report xml:test_coverage.xml --cov=program"
                 xunit checksName: '', tools: [JUnit(excludesPattern: '', pattern: 'test_results.xml', stopProcessingIfError: true)]
                 cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'test_coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 64, lineCoverageTargets: '50, 0, 0', methodCoverageTargets: '50, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
@@ -18,7 +17,7 @@ pipeline {
         stage("build") {
             steps {
                 sh "python -m build"
-                // Additional build steps go here
+                // TODO Additional build steps go here
             }
         }
         stage("test installation") {
@@ -30,7 +29,7 @@ pipeline {
         stage("archive") {
             steps {
                 archiveArtifacts artifacts: 'dist/*.tar.gz, dist/*.whl'
-                // Additional archival or documentation steps go here
+                // TODO Additional archival or documentation steps go here
             }
         }
         stage("publish") {

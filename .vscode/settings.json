@@ -1,0 +1,17 @@
+{
+    "python.testing.pytestArgs": [],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.linting.pylintArgs": [
+        "--rcfile=setup.cfg"
+    ],
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.extraPaths": [
+        "src"
+    ],
+    "cSpell.words": [
+        "pytest",
+        "pyvcf",
+        "vcfs"
+    ],
+}
