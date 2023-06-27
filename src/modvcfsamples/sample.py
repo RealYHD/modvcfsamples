@@ -46,9 +46,32 @@ def keep_specific_call_data(records: list[vcfpy.Record], header: vcfpy.Header, *
     return modified_records, modified_header
 
 def normalize_gt_to_length(records: list[vcfpy.Record], header: vcfpy.Header, num: int):
+    modified_records = []
     for record in records:
+        modified_calls = []
         for call in record.calls:
-            pass
+            gt_parts = call.data['GT'].replace("/", "|").split("|")
+            modified_call = deepcopy(call)
+            if len(gt_parts) > 1:
+                # TODO Add logging and output if gt_parts is longer.
+                pass
+            else:
+                modified_call.data['GT'] = "|".join([gt_parts[0]]  * num)
+            modified_calls.append(modified_call)
+        modified_record = vcfpy.Record(
+            record.CHROM,
+            record.POS,
+            record.ID,
+            record.REF,
+            record.ALT,
+            record.QUAL,
+            record.FILTER,
+            record.INFO,
+            record.FORMAT,
+            modified_calls,
+        )
+        modified_records.append(modified_record)
+    return modified_records, header
 
 def write_records_to_vcf(records: Iterable[vcfpy.Record], header: vcfpy.Header, path: str):
     os.makedirs(os.path.dirname(path), exist_ok=True)

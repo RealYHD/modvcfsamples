@@ -1,12 +1,18 @@
 import argparse
 import os
+from typing import Union
 from modvcfsamples import sample
 
-def run(vcfs: list[str], only: list[str], output_dir: str):
+def run(vcfs: list[str], only: list[str], gt: Union[int, None], output_dir: str):
     for vcf in vcfs:
         vcf_records, header = sample.get_records_from_vcf(vcf)
-        processed_vcfs, modified_header = sample.keep_specific_call_data(vcf_records, header, *only)
-        sample.write_records_to_vcf(processed_vcfs, modified_header, os.path.join(output_dir, os.path.basename(vcf)))
+        modified_vcfs = vcf_records
+        modified_header = header
+        if len(only) > 1:
+            modified_vcfs, modified_header = sample.keep_specific_call_data(modified_vcfs, modified_header, *only)
+        if gt is not None:
+            modified_vcfs, modified_header = sample.normalize_gt_to_length(modified_vcfs, modified_header, gt)
+        sample.write_records_to_vcf(modified_vcfs, modified_header, os.path.join(output_dir, os.path.basename(vcf)))
 
 def main():
     parser = argparse.ArgumentParser()
@@ -24,15 +30,23 @@ def main():
         type=str
     )
     parser.add_argument(
+        "--gt-norm",
+        "-g",
+        help="Resizes haploid genotypes to n-ploid by repeating it.",
+        type=int,
+        required=False
+    )
+    parser.add_argument(
         "--only",
         "-n",
         help="Remove everything but the sample datatype",
         action="append",
-        type=str
+        type=str,
+        required=False
     )
 
     args = parser.parse_args()
-    run(args.vcfs, args.only, args.output_dir)
+    run(args.vcfs, args.only, args.gt_norm, args.output_dir)
 
 
 if __name__ == "__main__":

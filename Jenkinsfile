@@ -9,7 +9,7 @@ pipeline {
         }
         stage("unit tests") {
             steps {
-                sh returnStatus: true, script: "python -m pytest --junitxml=unit_tests.xml --cov-report xml:test_coverage.xml --cov=program"
+                sh returnStatus: true, script: "python -m pytest --junitxml=unit_tests.xml --cov-report xml:test_coverage.xml --cov=modvcfsamples"
                 xunit checksName: '', tools: [JUnit(excludesPattern: '', pattern: 'test_results.xml', stopProcessingIfError: true)]
                 cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'test_coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 64, lineCoverageTargets: '50, 0, 0', methodCoverageTargets: '50, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
             }
