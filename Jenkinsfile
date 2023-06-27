@@ -23,7 +23,7 @@ pipeline {
         stage("test installation") {
             steps {
                 sh "pip install dist/*.whl"
-                // TODO Test installation by sample run
+                sh 'modvcfsamples ./tests/resources/test_files_shortened_haploid.vcf expected_out -n "GT" -g "4"'
             }
         }
         stage("archive") {
