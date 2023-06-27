@@ -12,6 +12,7 @@
     "cSpell.words": [
         "bioconda",
         "CHROM",
+        "modvcfsamples",
         "pytest",
         "pyvcf",
         "vcfpy",

@@ -8,7 +8,7 @@ def run(vcfs: list[str], only: list[str], gt: Union[int, None], output_dir: str)
         vcf_records, header = sample.get_records_from_vcf(vcf)
         modified_vcfs = vcf_records
         modified_header = header
-        if len(only) > 1:
+        if len(only) > 0:
             modified_vcfs, modified_header = sample.keep_specific_call_data(modified_vcfs, modified_header, *only)
         if gt is not None:
             modified_vcfs, modified_header = sample.normalize_gt_to_length(modified_vcfs, modified_header, gt)
