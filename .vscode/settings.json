@@ -10,6 +10,7 @@
         "src"
     ],
     "cSpell.words": [
+        "bioconda",
         "CHROM",
         "pytest",
         "pyvcf",
