@@ -1,3 +1,9 @@
-# A Generic Python Program Template
+# ModVCFSamples
 
-This template is meant to be a general starting point for any Python program. It contains Jenkins configurations, Conda environment starter files, all the variations of a Python's project configurations, and pytests.
+This is a simple CLI program that allows users to edit rapidly modify VCF files to conform to a certain format.
+
+## Install
+
+1. Run the following in any terminal with `pip` installed: `pip install --index-url https://git.reslate.systems/api/packages/ydeng/pypi/simple/ modvcfsamples`
+
+2. Use `modvcfsamples -h` to see help.
