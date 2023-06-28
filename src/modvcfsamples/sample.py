@@ -17,9 +17,13 @@ def get_records_from_vcf(path: str):
     return vcf_records, reader.header
 
 
-def keep_specific_call_data(records: list[vcfpy.Record], header: vcfpy.Header, *datatypes: str):
+def keep_specific_call_data(
+    records: list[vcfpy.Record], header: vcfpy.Header, *datatypes: str
+):
     lines_kept = [line for line in header.lines if line.key != "FORMAT"]
-    lines_kept.extend([line for line in header.get_lines("FORMAT") if line.id in datatypes])
+    lines_kept.extend(
+        [line for line in header.get_lines("FORMAT") if line.id in datatypes]
+    )
     modified_header = vcfpy.Header(lines_kept, header.samples)
     modified_records = []
 
@@ -45,18 +49,19 @@ def keep_specific_call_data(records: list[vcfpy.Record], header: vcfpy.Header, *
         modified_records.append(modified_record)
     return modified_records, modified_header
 
-def normalize_gt_to_length(records: list[vcfpy.Record], header: vcfpy.Header, num: int):
+
+def normalize_gt_to_length(records: list[vcfpy.Record], num: int):
     modified_records = []
     for record in records:
         modified_calls = []
         for call in record.calls:
-            gt_parts = call.data['GT'].replace("/", "|").split("|")
+            gt_parts = call.data["GT"].replace("/", "|").split("|")
             modified_call = deepcopy(call)
             if len(gt_parts) > 1:
                 # TODO Add logging and output if gt_parts is longer.
                 pass
             else:
-                modified_call.data['GT'] = "|".join([gt_parts[0]]  * num)
+                modified_call.data["GT"] = "|".join([gt_parts[0]] * num)
             modified_calls.append(modified_call)
         modified_record = vcfpy.Record(
             record.CHROM,
@@ -71,9 +76,44 @@ def normalize_gt_to_length(records: list[vcfpy.Record], header: vcfpy.Header, nu
             modified_calls,
         )
         modified_records.append(modified_record)
-    return modified_records, header
+    return modified_records
 
-def write_records_to_vcf(records: Iterable[vcfpy.Record], header: vcfpy.Header, path: str):
+
+def replace_sample_names(
+    records: list[vcfpy.Record], header: vcfpy.Header, to_replace: str, replaced: str
+):
+    modified_header = vcfpy.Header(
+        header.lines,
+        vcfpy.SamplesInfos(
+            [sample.replace(to_replace, replaced) for sample in header.samples.names]
+        ),
+    )
+    modified_records = []
+    for record in records:
+        modified_calls = []
+        for call in record.calls:
+            modified_calls.append(
+                Call(call.sample.replace(to_replace, replaced), call.data, call.site)
+            )
+        modified_record = vcfpy.Record(
+            record.CHROM,
+            record.POS,
+            record.ID,
+            record.REF,
+            record.ALT,
+            record.QUAL,
+            record.FILTER,
+            record.INFO,
+            record.FORMAT,
+            modified_calls,
+        )
+        modified_records.append(modified_record)
+    return modified_records, modified_header
+
+
+def write_records_to_vcf(
+    records: Iterable[vcfpy.Record], header: vcfpy.Header, path: str
+):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as vcf_stream:
         writer = vcfpy.Writer.from_stream(vcf_stream, header)
