@@ -8,6 +8,7 @@ def run(
     vcfs: list[str],
     only: list[str],
     gt: Union[int, None],
+    rename_samples: Union[list[str], None],
     filename_replace: Union[str, None],
     output_dir: str,
 ):
@@ -21,6 +22,14 @@ def run(
             )
         if gt is not None:
             modified_vcfs = sample.normalize_gt_to_length(modified_vcfs, gt)
+
+        if rename_samples is not None:
+            modified_vcfs, modified_header = sample.replace_sample_names(
+                modified_vcfs,
+                modified_header,
+                rename_samples[0],
+                rename_samples[1],
+            )
 
         if filename_replace is not None:
             modified_vcfs, modified_header = sample.replace_sample_names(
@@ -48,7 +57,7 @@ def main():
     parser.add_argument(
         "--gt-norm",
         "-g",
-        help="Resizes haploid genotypes to n-ploid by repeating it.",
+        help="Resizes haploid genotypes to n-ploidy by repeating it.",
         type=int,
         required=False,
     )
@@ -60,6 +69,17 @@ def main():
         type=str,
         required=False,
     )
+
+    parser.add_argument(
+        "--replace-name",
+        "p",
+        help="Similar to '--filename-replace', you may choose what to replace with what. "
+        "Ex. '-p a b' will replace all 'a' characters in a sample name with 'b'.",
+        nargs=2,
+        type=str,
+        required=False,
+    )
+
     parser.add_argument(
         "--filename-replace",
         "-e",
@@ -71,7 +91,14 @@ def main():
     )
 
     args = parser.parse_args()
-    run(args.vcfs, args.only, args.gt_norm, args.filename_replace, args.output_dir)
+    run(
+        args.vcfs,
+        args.only,
+        args.gt_norm,
+        args.replace_name,
+        args.filename_replace,
+        args.output_dir,
+    )
 
 
 if __name__ == "__main__":

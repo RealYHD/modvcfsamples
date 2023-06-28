@@ -13,6 +13,7 @@
         "bioconda",
         "CHROM",
         "modvcfsamples",
+        "ploidy",
         "pytest",
         "pyvcf",
         "vcfpy",
